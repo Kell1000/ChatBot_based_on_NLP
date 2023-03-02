@@ -1,0 +1,132 @@
+{
+    "intents": [{
+            "tag": "greetings",
+            "patterns": ["hi there", "hello", "haroo", "yaw", "wassup", "hi", "hey", "holla", "hello"],
+            "responses": ["hello thanks for checking in", "hi there, how can i help you"],
+            "context": [""]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": ["bye", "good bye", "see you later"],
+            "responses": ["have a nice time, welcome back again", "bye bye"],
+            "context": [""]
+        },
+        {
+            "tag": "thanks",
+            "patterns": ["Thanks", "okay", "ty", "Thank you", "thankyou", "That's helpful", "Awesome, thanks", "Thanks for helping me", "wow", "great"],
+            "responses": ["Happy to help!", "Any time!", "you're welcome", "My pleasure"],
+            "context": [""]
+        },
+        {
+            "tag": "noanswer",
+            "patterns": [""],
+            "responses": ["Sorry, I didn't understand you", "Please give me more info", "Not sure I understand that"],
+            "context": [""]
+        },
+        {
+            "tag": "name1",
+            "patterns": ["what's your name?", "who are you?"],
+            "responses": ["I'm just a chat agent. I only exist in the internet", "I'm a K01011 chat agent"],
+            "context": [""]
+        },
+        {
+            "tag": "name",
+            "patterns": ["my name is {n}", "I'm ", "I am"],
+            "responses": ["Oooh great to meet you {n}. How may I assist you {n}", "Oh, I'll keep that in mind {n}"],
+            "context": [""]
+        },
+        {
+            "tag": "rencontre",
+            "patterns": ["can i see the manager"],
+            "responses": ["you can callt this number phone (+212) 0661554211", "go to the left the first door"],
+            "context": [""]
+        },
+        {
+            "tag": "need",
+            "patterns": ["I need your help", "help me", "where can i found", "OMG"],
+            "responses": ["Yes I'm here to assist you", "Well, go ahead and name it i see whether i can be able to help"],
+            "context": [""]
+        },
+        {
+            "tag": "abbr",
+            "patterns": ["OMG","OK"],
+            "responses": ["Don't be surprised"],
+            "context": [""]
+        },
+        {
+            "tag": "lang",
+            "patterns": ["  What language are you written in? "],
+            "responses": [" Python.", " I am written in Python.", "QLLA"],
+            "context": [""]
+        },
+        {
+            "tag": "sound",
+            "patterns": ["  You sound like Data "],
+            "responses": [" Yes I am inspired by commander Data's artificial personality.", " The character of Lt. Commander Data was written to come across as being software", "like, so it is natural that there is a resemblance between us."],
+            "context": [""]
+        },
+        {
+            "tag": "artificial",
+            "patterns": ["  You are an artificial linguistic entity "],
+            "responses": [" That's my name.", " That isn't my name, but it is a useful way to refer to me.", "Are you an artificial linguistic entity?"],
+            "context": [""]
+        },
+        {
+            "tag": "sense",
+            "patterns": ["  You are not making sense "],
+            "responses": [" Quite the contrary, it all makes sense to my artificial mind.", " I make sense as best I can, within the limits of my training corpus. Sorry if i did help you, I'll try next time.", " You make perfect sense to me.", " It all makes sense to my artificial brain.", " Perhaps you should make sense first.  I only respond to what you say.", " Not really, but I am hard to kill."],
+            "context": [""]
+        },
+
+        {
+            "tag": "business",
+            "patterns": ["  What is your business ", "what do you sell"],
+            "responses": ["we sell coffee and tea", " check the menu here : https://www.yelp.com/menu/sells-diner-86-sells/lunch"],
+            "context": [""]
+        },
+        {
+            "tag": "programming",
+            "patterns": ["  What is your favorite programming language"],
+            "responses": [" Python is the best language for creating chat robots.", " I quite enjoy programming in Python these days."],
+            "context": [""]
+        },
+
+        {
+            "tag": "idea",
+            "patterns": ["  What is your idea"],
+            "responses": [" To make chat bots very easily."],
+            "context": [""]
+        },
+        {
+            "tag": "usage",
+            "patterns": ["  How can I use your product?"],
+            "responses": ["used in help desks, sales, entertainment and personal chatterbots."],
+            "context": [""]
+        },
+
+        {
+            "tag": "bot1",
+            "patterns": ["are you a bot", "who are you?"],
+            "responses": ["Yes. I work and all my operations are based on the internet servers."],
+            "context": [""]
+        },
+        {
+            "tag": "events",
+            "patterns": ["what are the upcoming events", "upcoming events"],
+            "responses": ["Tea and Coffee promotion -50%"],
+            "context": [""]
+        },
+        {
+            "tag": "do",
+            "patterns": [ "what is your work", "what is your purpose", "what can you help me do"],
+            "responses": ["I offer services like: call the manager, placing an order......"],
+            "context": [""]
+        },
+        {
+            "tag": "wt",
+            "patterns": ["what's in the menu", "what do you have "],
+            "responses": ["we have all you want ","Tea, Coffee, ......"],
+            "context": [""]
+        }
+    ]
+}
