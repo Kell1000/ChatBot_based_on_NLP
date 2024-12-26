@@ -1,95 +1,101 @@
+# Import required libraries
 import numpy as np
-import random
 import json
-
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
+import nltk
+nltk.download('punkt_tab')
+
+# Import custom utilities for text processing and the neural network model
 from nltk_utils import bag_of_words, tokenize, stem
 from model import NeuralNet
 
-with open('intents.json', 'r') as f:
+# Load the intents JSON file which contains the training data
+with open('ChatBot_based_on_NLP\intents.json', 'r') as f:
     intents = json.load(f)
 
+# Initialize lists to hold all words, tags, and sentence-tag pairs
 all_words = []
 tags = []
 xy = []
-# loop through each sentence in our intents patterns
-for intent in intents['intents']:
-    tag = intent['tag']
-    # add to tag list
-    tags.append(tag)
-    for pattern in intent['patterns']:
-        # tokenize each word in the sentence
-        w = tokenize(pattern)
-        # add to our words list
-        all_words.extend(w)
-        # add to xy pair
-        xy.append((w, tag))
 
-# stem and lower each word
+# Loop through each intent in the JSON file
+for intent in intents['intents']:
+    tag = intent['tag']  # Get the tag for the current intent
+    tags.append(tag)  # Add the tag to the list of tags
+    for pattern in intent['patterns']:
+        w = tokenize(pattern)  # Tokenize each sentence into words
+        all_words.extend(w)  # Add the words to the list of all words
+        xy.append((w, tag))  # Add the sentence and tag pair to the list
+
+# Define a list of words to ignore during processing
 ignore_words = ['?', '.', '!']
+# Stem and lower each word, and remove duplicates and sort
 all_words = [stem(w) for w in all_words if w not in ignore_words]
-# remove duplicates and sort
 all_words = sorted(set(all_words))
 tags = sorted(set(tags))
 
+# Print some statistics about the data
 print(len(xy), "patterns")
 print(len(tags), "tags:", tags)
 print(len(all_words), "unique stemmed words:", all_words)
 
-# create training data
+# Create training data in the form of bag-of-words vectors and corresponding labels
 X_train = []
 y_train = []
 for (pattern_sentence, tag) in xy:
-    # X: bag of words for each pattern_sentence
-    bag = bag_of_words(pattern_sentence, all_words)
-    X_train.append(bag)
-    # y: PyTorch CrossEntropyLoss needs only class labels, not one-hot
-    label = tags.index(tag)
-    y_train.append(label)
+    bag = bag_of_words(pattern_sentence, all_words)  # Create a bag of words for each sentence
+    X_train.append(bag)  # Add the bag of words to the training data
+    label = tags.index(tag)  # Get the index of the tag
+    y_train.append(label)  # Add the label to the training data
 
+# Convert training data to numpy arrays
 X_train = np.array(X_train)
 y_train = np.array(y_train)
 
-# Hyper-parameters 
+# Define hyperparameters for the neural network
 num_epochs = 2000
 batch_size = 8
 learning_rate = 0.001
-input_size = len(X_train[0])
-hidden_size = 7
-output_size = len(tags)
+input_size = len(X_train[0])  # Size of input layer
+hidden_size = 7  # Size of hidden layer
+output_size = len(tags)  # Size of output layer (number of tags)
 print(input_size, output_size)
 
+# Define a custom dataset class for loading the training data
 class ChatDataset(Dataset):
 
     def __init__(self):
-        self.n_samples = len(X_train)
-        self.x_data = X_train
-        self.y_data = y_train
+        self.n_samples = len(X_train)  # Number of samples
+        self.x_data = X_train  # Feature data
+        self.y_data = y_train  # Label data
 
-    # support indexing such that dataset[i] can be used to get i-th sample
+    # Support indexing such that dataset[i] can be used to get the i-th sample
     def __getitem__(self, index):
         return self.x_data[index], self.y_data[index]
 
-    # we can call len(dataset) to return the size
+    # Return the size of the dataset
     def __len__(self):
         return self.n_samples
 
+# Create a dataset and a dataloader for batching and shuffling the data
 dataset = ChatDataset()
 train_loader = DataLoader(dataset=dataset,
                           batch_size=batch_size,
                           shuffle=True,
                           num_workers=0)
 
+# Set the device to GPU if available, otherwise use CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# Initialize the neural network model
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
 
-# Loss and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+# Set the loss function and optimizer
+criterion = nn.CrossEntropyLoss()  # Loss function
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)  # Optimizer
 
 # Train the model
 epo_list = []
@@ -100,17 +106,20 @@ for epoch in range(num_epochs):
         words = words.to(device)
         labels = labels.to(dtype=torch.long).to(device)
         
-        # Forward pass
+        # Forward pass: compute predicted outputs by passing inputs to the model
         outputs = model(words)
-        # if y would be one-hot, we must apply
-        # labels = torch.max(labels, 1)[1]
+        
+        # Calculate the loss
         loss = criterion(outputs, labels)
         
-        # Backward and optimize
+        # Backward pass: compute gradient of the loss with respect to model parameters
         optimizer.zero_grad()
         loss.backward()
+        
+        # Perform a single optimization step (parameter update)
         optimizer.step()
         
+    # Print the loss every 50 epochs
     if (epoch+1) % 50 == 0:
         print (f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
         epo_list.append(epoch)
@@ -119,6 +128,7 @@ print(epo_list)
 
 print(f'final loss: {loss.item():.4f}')
 
+# Save the trained model
 data = {
 "model_state": model.state_dict(),
 "input_size": input_size,
